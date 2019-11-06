@@ -24,7 +24,7 @@ namespace IQToolkit.Data.SqlClient
         /// Constructs a <see cref="SqlQueryProvider"/>
         /// </summary>
         public SqlQueryProvider(SqlConnection connection, QueryMapping mapping = null, QueryPolicy policy = null)
-            : base(connection, TSqlLanguage.Default, mapping, policy)
+            : this(connection, TSqlLanguage.Default, mapping, policy)
         {
         }
 
@@ -33,6 +33,11 @@ namespace IQToolkit.Data.SqlClient
         /// </summary>
         public SqlQueryProvider(string connectionStringOrDatabaseFile, QueryMapping mapping = null, QueryPolicy policy = null)
             : this(CreateConnection(connectionStringOrDatabaseFile), mapping, policy)
+        {
+        }
+
+        protected SqlQueryProvider(SqlConnection connection,  QueryLanguage language, QueryMapping mapping, QueryPolicy policy)
+            : base(connection, language, mapping, policy)
         {
         }
 

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Core\Core\Hopex.Core.csproj" />
+    <ProjectReference Include="..\IQToolkit.Data.SqlClient\IQToolkit.Data.SqlClient.csproj" />
+    <ProjectReference Include="..\IQToolkit.Data\IQToolkit.Data.csproj" />
+    <ProjectReference Include="..\IQToolkit\IQToolkit.csproj" />
+  </ItemGroup>
+
+</Project>

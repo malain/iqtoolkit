@@ -28,18 +28,23 @@ namespace IQToolkit.Data.Common
         private readonly List<ParameterExpression> variables = new List<ParameterExpression>();
         private readonly List<Expression> initializers = new List<Expression>();
         private Dictionary<string, Expression> variableMap = new Dictionary<string, Expression>();
+        private bool _isHopexModelElement;
 
-        private ExecutionBuilder(QueryLinguist linguist, QueryPolicy policy, Expression executor)
+        private ExecutionBuilder(QueryLinguist linguist, QueryPolicy policy, Expression executor, bool isHopexModelElement)
         {
             this.linguist = linguist;
             this.policy = policy;
             this.executor = executor;
+            _isHopexModelElement = isHopexModelElement;
         }
 
         public static Expression Build(QueryLinguist linguist, QueryPolicy policy, Expression expression, Expression provider)
         {
+            var selectExpression = (expression as ProjectionExpression).Select;
+            var projectionType = (expression as ProjectionExpression).Projector.Type;
+            var entity = (selectExpression.From as TableExpression).Entity;
             var executor = Expression.Parameter(typeof(QueryExecutor), "executor");
-            var builder = new ExecutionBuilder(linguist, policy, executor);
+            var builder = new ExecutionBuilder(linguist, policy, executor, projectionType == entity.GetType());
             builder.variables.Add(executor);
             builder.initializers.Add(Expression.Call(Expression.Convert(provider, typeof(IQueryExecutorFactory)), "CreateExecutor", null, null));
             var result = builder.Build(expression);
@@ -112,7 +117,7 @@ namespace IQToolkit.Data.Common
 
         private Expression BuildInner(Expression expression)
         {
-            var eb = new ExecutionBuilder(this.linguist, this.policy, this.executor);
+            var eb = new ExecutionBuilder(this.linguist, this.policy, this.executor, false);
             eb.scope = this.scope;
             eb.receivingMember = this.receivingMember;
             eb.nReaders = this.nReaders;
@@ -230,7 +235,7 @@ namespace IQToolkit.Data.Common
                 projection = (ProjectionExpression)OuterParameterizer.Parameterize(this.scope.Alias, projection);
             }
 
-            string commandText = this.linguist.Format(projection.Select);
+            string commandText = this.linguist.Format(projection.Select, _isHopexModelElement);
             ReadOnlyCollection<NamedValueExpression> namedValues = NamedValueGatherer.Gather(projection.Select);
             QueryCommand command = new QueryCommand(commandText, namedValues.Select(v => new QueryParameter(v.Name, v.Type, v.QueryType)));
             Expression[] values = namedValues.Select(v => Expression.Convert(this.Visit(v.Value), typeof(object))).ToArray();

@@ -55,7 +55,7 @@ namespace IQToolkit.Data.Common
         /// <summary>
         /// Converts the query expression into text of this query language
         /// </summary>
-        public virtual string Format(Expression expression)
+        public virtual string Format(Expression expression, bool isHopexModelElement=false)
         {
             // use common SQL formatter by default
             return SqlFormatter.Format(expression);

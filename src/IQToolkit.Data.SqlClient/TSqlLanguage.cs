@@ -98,7 +98,7 @@ namespace IQToolkit.Data.SqlClient
                 return expression;
             }
 
-            public override string Format(Expression expression)
+            public override string Format(Expression expression, bool isHopexModelElement)
             {
                 return TSqlFormatter.Format(expression, this.Language);
             }

@@ -73,7 +73,7 @@ namespace IQToolkit.Data.Access
                 return expression;
             }
 
-            public override string Format(Expression expression)
+            public override string Format(Expression expression, bool isHopexModelElement)
             {
                 return AccessFormatter.Format(expression);
             }
